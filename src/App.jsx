@@ -2,6 +2,7 @@ import './index.css';
 import React, { useState } from 'react';
 import ResourceList from './components/ResourceList.jsx';
 import ResourceDetail from './components/ResourceDetail.jsx';
+import FeedbackForm from './components/FeedbackForm.jsx';
 
 function App() {
 
