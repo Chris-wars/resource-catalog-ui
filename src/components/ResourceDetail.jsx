@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import LoadingSpinner from "./LoadingSpinner.jsx";
 import BackButton from "./BackButton.jsx";
 import ErrorMessage from "./ErrorMessage.jsx";
+import { formatDate } from "../utils/formatDate.js";
 
 const ResourceDetail = ({ resourceId, onBack }) => {
 
@@ -59,15 +60,13 @@ const ResourceDetail = ({ resourceId, onBack }) => {
         feedback 
     } = detailResource || {};
 
-    const formattedDate = createdAt 
-        ? new Date(createdAt).toLocaleDateString('de-DE', {
+    const formattedDate = formatDate(createdAt, 'de-DE', {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
             hour: '2-digit',
             minute: '2-digit'
-        })
-        : 'N/A';
+        });
 
     const feedbackCount = feedback?.length || 0;
 
@@ -153,11 +152,7 @@ const ResourceDetail = ({ resourceId, onBack }) => {
                                 <div className="text-xs text-gray-500 flex justify-between items-center">
                                     <span>Von: {item.userId}</span>
                                     <span>
-                                        {new Date(item.timestamp).toLocaleDateString('de-DE', {
-                                            year: 'numeric',
-                                            month: 'short',
-                                            day: 'numeric'
-                                        })}
+                                        {formatDate(item.timestamp)}
                                     </span>
                                 </div>
                             </div>
