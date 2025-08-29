@@ -1,58 +1,44 @@
-// React und benötigte Komponenten importieren
 import React, { useState, useEffect } from "react";
-import LoadingSpinner from "./LoadingSpinner.jsx"; // Zeigt einen Ladeindikator
-import BackButton from "./BackButton.jsx";         // Zurück-Button
-import ErrorMessage from "./ErrorMessage.jsx";     // Fehleranzeige
-import FeedbackForm from "./FeedbackForm.jsx";     // Formular für Nutzerfeedback
-import { formatDate } from "../utils/formatDate.js"; // Hilfsfunktion für Datumsformatierung
+import LoadingSpinner from "./LoadingSpinner.jsx";
+import BackButton from "./BackButton.jsx";
+import ErrorMessage from "./ErrorMessage.jsx";
+import FeedbackForm from "./FeedbackForm.jsx";
+import { formatDate } from "../utils/formatDate.js";
 
-
-
-
-// Komponente für die Detailansicht einer Ressource
 const ResourceDetail = ({ resourceId, onBack }) => {
-    // State für die Ressourcendaten
+
     const [detailResource, setDetailResource] = useState(null);
-    // State für Ladeanzeige
     const [isLoadingDetail, setIsLoadingDetail] = useState(true);
-    // State für Fehlerbehandlung
     const [errorDetail, setErrorDetail] = useState(null);
-    // State, falls Ressource nicht gefunden wurde
     const [notFound, setNotFound] = useState(false);
 
-    // Lädt die Ressourcendetails, wenn sich die resourceId ändert
     useEffect(() => {
         const fetchResourceDetails = async () => {
-            // Simuliert eine kurze Wartezeit für bessere UX
             await new Promise(resolve => setTimeout(resolve, 1000));
             setIsLoadingDetail(true);
             setErrorDetail(null);
             setNotFound(false);
 
             try {
-                // Holt die Ressourcendaten vom Backend
                 const response = await fetch(`http://localhost:5002/resources/${resourceId}`);
 
                 if (!response.ok) {
                     if (response.status === 404) {
-                        // Ressource nicht gefunden
                         setNotFound(true);
                         setDetailResource(null);
                         setIsLoadingDetail(false);
                         return;
                     }
-                    // Sonstiger Fehler
+
                     setErrorDetail({code: response.status, message: response.statusText});
                     setDetailResource(null);
                     setIsLoadingDetail(false);
                     return;
                 }
 
-                // Antwort erfolgreich, Daten übernehmen
                 const data = await response.json();
                 setDetailResource(data);
             } catch (err) {
-                // Netzwerk- oder Serverfehler
                 console.error("Fehler beim Abrufen der Daten:", err);
                 setErrorDetail(err.message);
             } finally {
@@ -64,7 +50,6 @@ const ResourceDetail = ({ resourceId, onBack }) => {
         }
     }, [resourceId]);
 
-    // Destrukturiert die wichtigsten Felder aus den geladenen Daten
     const { 
         id, 
         title, 
@@ -76,26 +61,26 @@ const ResourceDetail = ({ resourceId, onBack }) => {
         feedback 
     } = detailResource || {};
 
-    // Formatiert das Erstellungsdatum für die Anzeige
     const formattedDate = formatDate(createdAt, 'de-DE', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
 
-    // Anzahl der Feedback-Einträge
     const feedbackCount = feedback?.length || 0;
 
-    // Zeigt einen Ladeindikator, solange die Daten geladen werden
+    const handleFeedbackSubmitted = (updatedResource) => {
+        setDetailResource(updatedResource);
+    };
+
     if (isLoadingDetail) {
         return (
             <LoadingSpinner label="Ressourcendetails werden geladen..." />
         );
     }
 
-    // Zeigt eine Fehlermeldung, falls ein Fehler aufgetreten ist
     if (errorDetail) {
         return (
             <ErrorMessage
@@ -109,7 +94,6 @@ const ResourceDetail = ({ resourceId, onBack }) => {
         );
     }
 
-    // Zeigt eine Info, falls die Ressource nicht existiert
     if (notFound) {
         return (
             <ErrorMessage
@@ -122,16 +106,12 @@ const ResourceDetail = ({ resourceId, onBack }) => {
         );
     }
 
-    // Haupt-UI für die Detailansicht
     return (
         <div className="bg-white p-8 rounded-2xl shadow-lg">
-            {/* Zurück-Button */}
+            {/*Back Button to Resource List */}
             <BackButton onBack={onBack} label="Zurück zu allen Ressourcen"/>
 
-            {/* Titel der Ressource */}
             <h2 className="text-4xl font-extrabold text-main-dark mb-4">{title}</h2>
-
-            {/* Typ der Ressource */}
             <div className="flex items-center space-x-4 mb-6">
                 {type && (
                     <span className="text-sm font-medium text-highlight-light bg-highlight-light/10 px-3 py-1 rounded-full">
@@ -140,12 +120,9 @@ const ResourceDetail = ({ resourceId, onBack }) => {
                 )}
             </div>
 
-            {/* Beschreibungstext */}
+            {/*Ressourcendetails zeigen */}
             {description && 
-                <p className="text-gray-700 text-lg leading-relaxed mb-8">{description}</p>
-            }
-
-            {/* Metadaten zur Ressource */}
+            <p className="text-gray-700 text-lg leading-relaxed mb-8">{description}</p>}
             <div className="border-t border-gray-200 pt-8 mt-8 text-gray-600 text-sm grid grid-cols-1 md:grid-cols-2 gap-4">
                 {authorId && (
                     <p className="flex items-center">
@@ -172,8 +149,8 @@ const ResourceDetail = ({ resourceId, onBack }) => {
                     </p>
                 )}
             </div>
-
-            {/* Feedback-Liste */}
+            
+            {/*Feedbackeintreage zeigen*/}
             {feedback && feedback.length > 0 && (
                 <div className="border-t border-gray-200 pt-8 mt-8">
                     <h3 className="text-2xl font-bold text-gray-800 mb-6">Feedback</h3>
@@ -193,10 +170,10 @@ const ResourceDetail = ({ resourceId, onBack }) => {
                 </div>
             )}
 
-            {/* Feedback-Formular für neue Rückmeldungen */}
+            {/*Feedback Form */}
             <div className="border-t border-gray-200 pt-8 mt-8">
                 <h3 className="text-2xl font-bold text-gray-800 mb-6">Ihr Feedback teilen</h3>
-                <FeedbackForm resourceId={id}/>
+                <FeedbackForm resourceId={id} onFeedbackSubmitted={handleFeedbackSubmitted}/>
             </div>
         </div>
     );
