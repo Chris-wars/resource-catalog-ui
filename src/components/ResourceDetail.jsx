@@ -5,6 +5,7 @@ import BackButton from "./BackButton.jsx";         // Zurück-Button
 import ErrorMessage from "./ErrorMessage.jsx";     // Fehleranzeige
 import FeedbackForm from "./FeedbackForm.jsx";     // Formular für Nutzerfeedback
 import FeedbackItem from "./FeedbackItem.jsx";
+import StarRating from "./StarRating.jsx";
 import { formatDate } from "../utils/formatDate.js"; // Hilfsfunktion für Datumsformatierung
 
 // Komponente für die Detailansicht einer Ressource
@@ -176,6 +177,12 @@ const ResourceDetail = ({ resourceId, onBack }) => {
                 )}
             </div>
             
+            {/* StarRating zeigen */}
+            <div className="border-t border-gray-200 pt-8 mt-8">
+                <h3 className="text-2xl font-bold text-gray-800 mb-6">Ihre Bewertung geben</h3>
+                <StarRating />
+            </div>
+
             {/* Feedback-Einträge anzeigen */}
             {feedback && feedback.length > 0 && (
                 <div className="border-t border-gray-200 pt-8 mt-8">

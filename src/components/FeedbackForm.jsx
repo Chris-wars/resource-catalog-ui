@@ -36,7 +36,10 @@ const FeedbackForm = ( {resourceId, onFeedbackSubmitted } ) => {
 
             const updatedResource = await response.json();
             console.log('Feedback erfolgreich gesendet', updatedResource);
+
             setSuccessMessage('Ihr Feedback wurde erfolgreich gespeichert!');
+            // Erfolgsmeldung nach 5 Sekunden automatisch ausblenden
+            setTimeout(() => setSuccessMessage(null), 5000);
             if (onFeedbackSubmitted) {
                 onFeedbackSubmitted(updatedResource);
             }
@@ -65,7 +68,7 @@ const FeedbackForm = ( {resourceId, onFeedbackSubmitted } ) => {
                 value={feedbackText}
                 onChange={(event) => setFeedbackText(event.target.value)}
                 disabled={isSubmitting}
-                onClick={() => setSuccessMessage(null)}
+                
             >
             </textarea>
             <button 
